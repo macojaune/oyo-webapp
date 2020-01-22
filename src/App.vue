@@ -1,8 +1,8 @@
 <template lang="pug">
   #app
-    #nav
-      router-link( to="/") Home |
-      router-link( to="/about") About
+    h1 Ò YO?
+      br
+      small Trouvez vos groupes !
     router-view
 </template>
 
