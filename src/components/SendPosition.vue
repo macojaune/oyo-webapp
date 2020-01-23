@@ -69,6 +69,8 @@ export default {
         this.data.position = position;
         this.showSendPosition = false;
         // todo sendToDb
+
+        this.$store.dispatch('createGroup', this.data);
       }
     },
     handleFocus() {

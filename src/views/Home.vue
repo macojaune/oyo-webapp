@@ -59,6 +59,7 @@ export default {
     };
   },
   created() {
+    this.groups = this.$store.getters.groups;
   },
 };
 </script>

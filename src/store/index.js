@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import axios from 'axios';
 
 Vue.use(Vuex);
 
@@ -22,13 +23,18 @@ export default new Vuex.Store({
   },
   actions: {
     getGroups: ({ commit }) => {
+      let groupList = [];
       // api call fetch groups
-      const groupList = [];
+      // eslint-disable-next-line no-return-assign
+      axios.get('https://oyoweb-ff04.restdb.io/rest/groups', { headers: { 'x-apikey': '5e2a1af54327326cf1c91b4e' } }).then(response => (groupList = response.data));
       commit('initGroups', groupList);
     },
     createGroup: ({ commit }, group) => {
       console.log(group);
       // api call create group
+      axios.post('https://oyoweb-ff04.restdb.io/rest/groups',
+        group, { headers: { 'x-apikey': '5e2a1af54327326cf1c91b4e' } });
+
       const newGroup = {};
       commit('addGroup', newGroup);
     },
