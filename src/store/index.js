@@ -2,6 +2,9 @@ import Vue from 'vue';
 import Vuex from 'vuex';
 import axios from 'axios';
 
+import PositionModule from './position';
+import GroupModule from './group';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -43,5 +46,7 @@ export default new Vuex.Store({
     },
   },
   modules: {
+    position: PositionModule,
+    group: GroupModule,
   },
 });

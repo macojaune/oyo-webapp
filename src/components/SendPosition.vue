@@ -16,13 +16,13 @@
         aria-label="Quel groupe ?"
       v-if="data.group ===''"
         @submit="setGroup")
-        template(#default="{rootProps, inputProps, inputListeners, resultListProps, resultListListeners, results, resultProps}")
+        template(#default="{rootProps, inputProps, inputListeners, resultListListeners, results, resultProps}")
           div(v-bind="rootProps")
             input.autocomplete-input(v-bind="inputProps"
             :value="searchValue"
               v-on="inputListeners"
-              @focus="handleFocus"
-              @blur="handleBlur"
+              @focus="toggleFocus"
+              @blur="toggleFocus"
               :class="['autocomplete-input', { 'autocomplete-input-no-results': searchResults.length===0 }, { 'autocomplete-input-focused': focus } ]")
             ul.autocomplete-result-list(v-on="resultListListeners" v-show="focus")
               li(v-for="(result, index) in results" :key="result.id"
@@ -32,7 +32,9 @@
 </template>
 
 <script>
-export default {
+  import { mapActions } from 'vuex';
+
+  export default {
   name: 'SendPosition',
   props: ['groups'],
   data() {
@@ -48,6 +50,7 @@ export default {
     };
   },
   methods: {
+    ...mapActions('position', ['addPosition']),
     toggleSendPosition() {
       this.showSendPosition = true;
     },
@@ -65,19 +68,14 @@ export default {
     },
     async sendLocation() {
       if (this.data.group !== '') {
-        const position = await this.$getLocation({ enableHighAccuracy: true });
-        this.data.position = position;
+        this.data.position = await this.$getLocation({ enableHighAccuracy: true });
         this.showSendPosition = false;
-        // todo sendToDb
-
-        this.$store.dispatch('createGroup', this.data);
+        // sendToDb
+        this.addPosition(this.data);
       }
     },
-    handleFocus() {
-      this.focus = true;
-    },
-    handleBlur() {
-      this.focus = false;
+    toggleFocus() {
+      this.focus = !this.focus;
     },
   },
 };
