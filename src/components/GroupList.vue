@@ -1,7 +1,8 @@
 <template lang="pug">
   #groupList.mt-3
     b-list-group(v-for="group in groups" :key="group.id")
-      b-list-group-item.flex-column.align-items-start.mb-2(v-if="group.positions.length > 0")
+      b-list-group-item.flex-column.align-items-start.mb-2(button
+      v-if="group.positions.length > 0" @click="selectGroup(group)")
         .d-flex.w-100.justify-content-between
           h5 {{group.name}}
           small il y a {{fromNow(group._changed)}}
@@ -15,9 +16,14 @@ moment.locale('fr');
 
 export default {
   name: 'GroupList',
-  props: ['groups'],
+  props: ['groups', 'handleSelect'],
   data() {
     return {};
+  },
+  methods: {
+    selectGroup(group) {
+      this.handleSelect(group);
+    },
   },
   computed: {
     fromNow(datetime) {
