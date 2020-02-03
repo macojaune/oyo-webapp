@@ -3,19 +3,18 @@
     b-container( fluid )
       b-row
         b-col
-    MglMap(:accessToken="mbToken" :mapStyle.sync="mbStyle"
-      :center="{lat:16.242, lng:-61.530}")
+    MglMap(:accessToken="mbToken" :mapStyle.sync="mbStyle")
       MglNavigationControl( position="top-right" )
       MglGeolocateControl( position="top-right" )
-      MglMarker(v-for="group in groups"
-        :key="group.id"
-        :coordinates="[group.positions[0].lng,group.positions[0].lat]"
+      MglMarker(v-for="group in groupList"
+        :key="group._id"
+        :coordinates="[ group.positions[0].position.lng, group.positions[0].position.lat ]"
         color="blue")
         MglPopup
           h5 {{group.name}}
     b-container
-      SendPosition(:groups='groups')
-      GroupList(:groups="groups")
+      SendPosition(:groups='groupList')
+      GroupList(:groups="groupList")
     AddThis(:publicId="addThisId")
 </template>
 
@@ -24,6 +23,7 @@ import {
   MglMap, MglGeolocateControl, MglNavigationControl, MglPopup, MglMarker,
 } from 'vue-mapbox';
 import AddThis from 'vue-simple-addthis-share';
+import { mapActions, mapGetters } from 'vuex';
 import GroupList from '@/components/GroupList.vue';
 import SendPosition from '@/components/SendPosition.vue';
 
@@ -44,22 +44,16 @@ export default {
       mbToken: process.env.VUE_APP_MAPBOX_TOKEN,
       addThisId: process.env.VUE_APP_ADDTHIS_ID,
       mbStyle: 'mapbox://styles/marvinl/ck5lztuer05fn1iop4yx4nz0a',
-      groups: [{
-        id: '1',
-        name: 'Akiyo',
-        lastSeen: '2',
-        positions: [{ lat: 16.242, lng: -61.530 },
-          { lat: 16.249, lng: -61.543 }],
-      }, {
-        id: '2',
-        name: 'Nasyon',
-        lastSeen: '12',
-        positions: [{ lat: 16.249, lng: -61.543 }],
-      }],
     };
   },
+  computed: {
+    ...mapGetters('group', ['groupList']),
+  },
   created() {
-    this.groups = this.$store.getters.groups;
+    this.getGroups();
+  },
+  methods: {
+    ...mapActions('group', ['getGroups']),
   },
 };
 </script>
