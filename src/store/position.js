@@ -5,6 +5,7 @@ import t from './types';
 Vue.use(Vuex);
 
 export default {
+  namespaced: true,
   state: {
     isLoading: false,
     newPosition: {},

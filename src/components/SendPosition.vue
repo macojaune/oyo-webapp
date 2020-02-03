@@ -32,9 +32,9 @@
 </template>
 
 <script>
-  import { mapActions } from 'vuex';
+import { mapActions } from 'vuex';
 
-  export default {
+export default {
   name: 'SendPosition',
   props: ['groups'],
   data() {
