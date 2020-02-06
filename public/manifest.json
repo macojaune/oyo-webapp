@@ -1,0 +1,10 @@
+{
+  "name": "Ò yo ? ",
+  "short_name": "O-yo",
+  "theme_color": "#2196f3",
+  "background_color": "#ffffff",
+  "display": "minimal-ui",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/"
+}

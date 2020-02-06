@@ -1,38 +1,36 @@
 <template lang="pug">
-  #groupList.mt-3
-    b-list-group(v-for="group in groups" :key="group.id")
-      b-list-group-item.flex-column.align-items-start.mb-2(button
+  #groupList.my-3.overflow-auto
+    b-list-group(v-for="group in groups" :key="group.id" v-show="!isLoading")
+      b-list-group-item.align-items-start.mb-2(button
       v-if="group.positions.length > 0" @click="selectGroup(group)")
-        .d-flex.w-100.justify-content-between
+        .d-flex.justify-content-between
           h5 {{group.name}}
-          small il y a {{fromNow(group._changed)}}
-        p.text-left.m-0 Rue
+          span {{fromNow(group._changed)}}
+        p.text-left.m-0(v-if="group.address") {{group.address.display_name}}
+    b-spinner(type="grow" variant="primary" v-show="isLoading")
 </template>
 
 <script>
-import moment from 'moment';
-
-moment.locale('fr');
+import { mapGetters } from 'vuex';
 
 export default {
   name: 'GroupList',
-  props: ['groups', 'handleSelect'],
+  props: ['groups', 'handleSelect', 'fromNow'],
   data() {
     return {};
+  },
+  computed: {
+    ...mapGetters(['isLoading']),
   },
   methods: {
     selectGroup(group) {
       this.handleSelect(group);
     },
   },
-  computed: {
-    fromNow(datetime) {
-      return moment(datetime).fromNow(true);
-    },
-  },
 };
 </script>
 
-<style scoped>
-
+<style lang="stylus">
+  #groupList
+    max-height  350px
 </style>
