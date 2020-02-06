@@ -3,6 +3,7 @@ import { BootstrapVue, IconsPlugin } from 'bootstrap-vue';
 import Autocomplete from '@trevoreyre/autocomplete-vue';
 import VueGeolocation from 'vue-browser-geolocation';
 
+import VueDisqus from 'vue-disqus';
 import App from './App.vue';
 
 import './registerServiceWorker';
@@ -20,6 +21,7 @@ Vue.use(VueGeolocation);
 Vue.use(Autocomplete);
 Vue.use(BootstrapVue);
 Vue.use(IconsPlugin);
+Vue.use(VueDisqus);
 
 new Vue({
   router,
