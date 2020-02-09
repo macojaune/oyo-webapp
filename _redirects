@@ -2,4 +2,4 @@
 # These rules will change if you change your site’s custom domains or HTTPS settings
 
 # Redirect default Netlify subdomain to primary domain
-https://oyo-web.netlify.com/* https://oyo.marvinl.com/:splat 301!
+http://oyo-web.netlify.com/* http://oyo.marvinl.com/:splat 301!
