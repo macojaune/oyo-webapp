@@ -2,7 +2,7 @@
   #home
     MglMap(:accessToken="mbToken" :mapStyle.sync="mbStyle"
       :zoom=11
-      :center="{lat:devicePosition.lat || 16.242, lng:devicePosition.lng || -61.530}"
+      :center="{lat: 16.242, lng: -61.530}"
       @load="onMapLoad" :attributionControl="false")
       MglAttributionControl
       MglNavigationControl( position="top-right" showZoom :showCompass="false" )
