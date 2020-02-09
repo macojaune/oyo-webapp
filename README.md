@@ -1,5 +1,7 @@
 # oyo-web
 
+[![Netlify Status](https://api.netlify.com/api/v1/badges/202b8953-9eff-4969-b7af-35331e9ff2a0/deploy-status)](https://app.netlify.com/sites/oyo-web/deploys)
+
 ## Project setup
 ```
 yarn install
