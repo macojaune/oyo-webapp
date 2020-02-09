@@ -1,12 +1,12 @@
 <template lang="pug">
   #home
     MglMap(:accessToken="mbToken" :mapStyle.sync="mbStyle"
-      :zoom=11
-      :center="{lat:devicePosition.lat || 16.242, lng:devicePosition.lng || -61.530}"
+      :zoom=9
+      :center="{lat: 16.242, lng: -61.530}"
       @load="onMapLoad" :attributionControl="false")
       MglAttributionControl
       MglNavigationControl( position="top-right" showZoom :showCompass="false" )
-      MglGeolocateControl( position="top-right" trackUserLocation)
+      MglGeolocateControl( position="top-right")
       MglMarker(v-for="group in groupList"
         v-if="group.positions.length>0"
         :key="group._id"
@@ -37,7 +37,7 @@
 
 <script>
 import {
-  MglMap, MglGeolocateControl, MglNavigationControl, MglPopup, MglMarker,
+  MglMap, MglGeolocateControl, MglNavigationControl, MglAttributionControl, MglPopup, MglMarker,
 } from 'vue-mapbox';
 import AddThis from 'vue-simple-addthis-share';
 import { mapActions, mapGetters } from 'vuex';
@@ -52,6 +52,7 @@ export default {
     SendPosition,
     MglMap,
     MglGeolocateControl,
+    MglAttributionControl,
     MglNavigationControl,
     MglMarker,
     MglPopup,
