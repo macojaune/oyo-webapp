@@ -12,12 +12,14 @@ const API_CONFIG = { headers: { 'x-apikey': process.env.VUE_APP_BDD_API_KEY } };
 
 export default new Vuex.Store({
   state: {
+    position: null,
     groups: [],
     isLoading: false,
     error: null,
     success: null,
   },
   getters: {
+    devicePosition: state => state.position,
     groupList: state => state.groups,
     isLoading: ({ isLoading }) => isLoading,
     showMsg: ({ error, success }) => error !== null || success !== null,
@@ -46,7 +48,7 @@ export default new Vuex.Store({
     [t.ADD_POSITION_REQUEST]: (state) => {
       state.isLoading = true;
     },
-    [t.ADD_POSITION_SUCCESS]: (state, position, group) => {
+    [t.ADD_POSITION_SUCCESS]: (state, group, position) => {
       const id = state.groups.findIndex(g => g._id === group._id);
       state.groups[id].positions.unshift(position);
       state.groups[id]._changed = Date.now();
@@ -62,6 +64,8 @@ export default new Vuex.Store({
     [t.GET_ADDRESS_REQUEST]: () => {},
     [t.GET_ADDRESS_SUCCESS]: () => { },
     [t.GET_ADDRESS_FAILURE]: (state, err) => { state.error = err; },
+    [t.GET_DEVICE_POSITION_SUCCESS]: (state, coords) => { state.position = coords; },
+    [t.GET_DEVICE_POSITION_FAILURE]: (state, err) => { state.error = err; },
   },
   actions: {
     getGroups: async ({ dispatch, commit }) => {
@@ -103,7 +107,7 @@ export default new Vuex.Store({
       try {
         commit(t.ADD_POSITION_REQUEST);
         // api call add position
-        const newPosition = await axios.post(`${API_URL}groups/${group._id}/positions`, position, API_CONFIG);
+        const newPosition = await axios.post(`${API_URL}groups/${group._id.toString()}/positions`, position, API_CONFIG);
         commit(t.ADD_POSITION_SUCCESS, group, newPosition);
       } catch (e) {
         commit(t.ADD_POSITION_FAILURE, e);
@@ -111,7 +115,7 @@ export default new Vuex.Store({
     },
     getAddress: async ({ commit }, group) => {
       if (group.positions.length > 0) {
-        const { lat, lng } = group.positions[0];
+        const { lat, lng } = group.positions[group.positions.length - 1];
         commit(t.GET_ADDRESS_REQUEST);
         try {
           const { data } = await axios.get('https://nominatim.openstreetmap.org/reverse', {
@@ -129,6 +133,27 @@ export default new Vuex.Store({
           commit(t.GET_ADDRESS_FAILURE, e);
         }
       } return false;
+    },
+    getDevicePosition: async ({ commit }) => {
+      commit(t.GET_DEVICE_POSITION_REQUEST);
+      try {
+        const { coords } = await new Promise((resolve, reject) => {
+          if (!('geolocation' in navigator)) {
+            reject(new Error('Geolocation is not available.'));
+          }
+
+          navigator.geolocation.getCurrentPosition((pos) => {
+            resolve(pos);
+          }, (err) => {
+            reject(err);
+          });
+        });
+        commit(t.GET_DEVICE_POSITION_SUCCESS, {
+          lat: coords.latitude, lng: coords.longitude, altitude: coords.altitude, accuracy: coords.accuracy, altitudeAccuracy: coords.altitudeAccuracy,
+        });
+      } catch (e) {
+        commit(t.GET_DEVICE_POSITION_FAILURE, e);
+      }
     },
   },
 });

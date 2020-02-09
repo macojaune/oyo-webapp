@@ -1,28 +1,29 @@
 <template lang="pug">
   #home
     MglMap(:accessToken="mbToken" :mapStyle.sync="mbStyle"
-      :zoom=9
-      :center="{lat:16.242, lng:-61.530}"
-      @load="onMapLoad")
-      MglNavigationControl( position="top-right" )
-      MglGeolocateControl( position="top-right" )
+      :zoom=11
+      :center="{lat:devicePosition.lat || 16.242, lng:devicePosition.lng || -61.530}"
+      @load="onMapLoad" :attributionControl="false")
+      MglAttributionControl
+      MglNavigationControl( position="top-right" showZoom :showCompass="false" )
+      MglGeolocateControl( position="top-right" trackUserLocation)
       MglMarker(v-for="group in groupList"
         v-if="group.positions.length>0"
         :key="group._id"
-        :coordinates="[ group.positions[0].lng, group.positions[0].lat ]"
+        :coordinates="[ last(group.positions).lng, last(group.positions).lat ]"
         :color="markerColor()")
         MglPopup(:closeButton="false")
           b-card(:title="group.name")
             b-card-text
               b Vu pour la dernière fois:
-              |  {{fromNow(group._changed)}}
+              |  {{fromNow(last(group.positions)._changed)}}
             b-button.card-link(@click="selectGroup(group)")
               b-icon-arrows-angle-contract
             b-button.card-link(variant="success" :href="createLink(group)" target="_blank")
               b-icon-cursor-fill
               | Y aller
     b-container
-      SendPosition(:groups='groupList')
+      SendPosition
       GroupList(:groups="groupList" :handleSelect="selectGroup" :fromNow="fromNow")
     b-container.my-3
       b-row.mt-4.mb-2
@@ -32,9 +33,6 @@
               b-icon-arrow-down
       vue-disqus(shortname="o-yo")
     AddThis(:publicId="addThisId")
-    b-modal(v-model="showError" :title="error !== null ? error.title : ''")
-      p(v-if="error !== null")
-        | {{error.msg === 'no position access'        ? "L'application fonctionne mieux avec la         localisation activée !": error.msg}}
 </template>
 
 <script>
@@ -71,26 +69,22 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['groupList']),
+    ...mapGetters(['groupList', 'devicePosition']),
+
   },
   async created() {
     await this.getGroups();
-    try {
-      await this.$getLocation({ enableHighAccuracy: true });
-    } catch (e) {
-      this.error = { title: 'Attention', msg: e };
-      this.showError = true;
-    }
+    await this.getDevicePosition();
   },
   methods: {
-    ...mapActions(['getGroups']),
+    ...mapActions(['getGroups', 'getDevicePosition']),
     async onMapLoad(event) {
       const { actions } = event.component;
       this.actions = actions;
     },
-    async selectGroup({ positions }) {
+    async selectGroup(group) {
       this.actions.flyTo({
-        center: [positions[0].lng, positions[0].lat], zoom: 17, speed: 1,
+        center: [this.last(group.positions).lng, this.last(group.positions).lat], zoom: 17, speed: 1,
       });
     },
     fromNow(datetime) {
@@ -103,6 +97,9 @@ export default {
     },
     markerColor() {
       return `#${(`000000${Math.random().toString(16).slice(2, 8).toUpperCase()}`).slice(-6)}`;
+    },
+    last(arr) {
+      return arr[arr.length - 1];
     },
   },
 };

@@ -37,7 +37,6 @@ import { mapActions, mapGetters } from 'vuex';
 
 export default {
   name: 'SendPosition',
-  props: ['groups'],
   data() {
     return {
       show: false,
@@ -51,15 +50,15 @@ export default {
     };
   },
   computed: {
-    ...mapGetters(['isLoading']),
+    ...mapGetters(['isLoading', 'devicePosition', 'groupList']),
   },
   methods: {
-    ...mapActions(['addGroup', 'addPosition']),
+    ...mapActions(['addGroup', 'addPosition', 'getDevicePosition']),
     search(input) {
       this.searchValue = input;
-      if (input.length < 1) this.searchResults = this.groups.slice(0, 3);
+      if (input.length < 1) this.searchResults = this.groupList.slice(0, 2);
 
-      this.searchResults = this.groups.filter(({ name }) => name.toLowerCase()
+      this.searchResults = this.groupList.filter(({ name }) => name.toLowerCase()
         .startsWith(input.toLowerCase()));
 
       return this.searchResults;
@@ -73,7 +72,8 @@ export default {
     },
     async sendLocation() {
       if (this.data.group !== '') {
-        this.data.position = await this.$getLocation({ enableHighAccuracy: true });
+        await this.getDevicePosition();
+        this.data.position = this.devicePosition;
         // sendToDb
         await this.addPosition(this.data);
         this.show = false;
