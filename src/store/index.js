@@ -50,8 +50,7 @@ export default new Vuex.Store({
     },
     [t.ADD_POSITION_SUCCESS]: (state, group, position) => {
       const id = state.groups.findIndex(g => g._id === group._id);
-      state.groups[id].positions.unshift(position);
-      state.groups[id]._changed = Date.now();
+      state.groups[id].positions.push(position);
       state.success = 'Position bien reçue.';
       state.isLoading = false;
     },
